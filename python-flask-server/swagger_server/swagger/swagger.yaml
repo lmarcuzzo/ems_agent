@@ -1,0 +1,184 @@
+---
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: "VNF EM Server"
+basePath: "/"
+schemes:
+- "https"
+paths:
+  /ems/run:
+    put:
+      summary: "Start an application"
+      description: "Run an application with its command line parameters. The process\
+        \ PID is returned if command was sucessful"
+      operationId: "run_app"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "command"
+        in: "query"
+        description: "command with its parameters"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "No response was specified"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/running:
+    get:
+      summary: "Check if application is running"
+      description: "Check if application specified by PID is still running."
+      operationId: "running_app"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "pid"
+        in: "query"
+        description: "application main thread ID"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "No response was specified"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/read_config:
+    get:
+      summary: "Returns File Content"
+      operationId: "read_file"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "No response was specified"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/write_config:
+    post:
+      summary: "Replace File Content or Create File"
+      operationId: "write_file"
+      consumes:
+      - "multipart/form-data"
+      parameters:
+      - name: "path"
+        in: "query"
+        description: "File path string"
+        required: true
+        type: "string"
+      - name: "File"
+        in: "formData"
+        description: "File to upload"
+        required: true
+        type: "file"
+      responses:
+        200:
+          description: "No response was specified"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/metrics:
+    get:
+      summary: "Return general metrics from VNF"
+      description: "Return an array of metrics from the VNF"
+      operationId: "os_metrics"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "No response was specified"
+          schema:
+            $ref: "#/definitions/Metrics"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/poweroff:
+    post:
+      summary: "Power off the system"
+      operationId: "os_poweroff"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "No response was specified"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/shutdown:
+    post:
+      summary: "Shuts down the system"
+      operationId: "os_shutdown"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "No response was specified"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/reboot:
+    post:
+      summary: "Reboots the system"
+      operationId: "os_reboot"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "No response was specified"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+  /ems/dmesg:
+    get:
+      summary: "Returns the operating system boot log"
+      operationId: "os_dmesg"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "No response was specified"
+          schema:
+            type: "string"
+      x-swagger-router-controller: "swagger_server.controllers.default_controller"
+definitions:
+  Metric:
+    properties:
+      id:
+        type: "integer"
+        format: "int32"
+        description: "Unique identifier for each metric"
+      name:
+        type: "string"
+        description: "Metric name"
+      value:
+        type: "integer"
+        format: "int64"
+        description: "Value of current metric"
+    description: "Single Metric"
+    example:
+      name: "name"
+      id: 0
+      value: 6
+  Metrics:
+    properties:
+      list:
+        type: "array"
+        description: "List of metric objects"
+        items:
+          $ref: "#/definitions/Metric"
+      time_ms:
+        type: "integer"
+        format: "int64"
+        description: "Time when metrics were taken (milliseconds since epoch)"
+    description: "List of all metrics"
+    example:
+      time_ms: 1
+      list:
+      - name: "name"
+        id: 0
+        value: 6
+      - name: "name"
+        id: 0
+        value: 6
